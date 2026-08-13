@@ -1,0 +1,24 @@
+# Build artifacts
+node_modules/
+dist/
+
+# Secrets & env
+.env
+.env.local
+.env.*.local
+*.log
+
+# Wallet files (never commit)
+wallet.json
+
+# Runtime state
+data/portfolio.json
+
+# OS / editor
+.DS_Store
+*.swp
+.vscode/
+.idea/
+
+# Vercel
+.vercel/

@@ -1,0 +1,2 @@
+# Portfolio state is written here at runtime by the agent.
+# This .gitkeep ensures the directory exists; the portfolio.json itself is gitignored.
