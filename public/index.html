@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Delphi Agent Arena — Autonomous Trading Bot</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'SF Mono', 'Monaco', 'Courier New', monospace; background: #0a0a0a; color: #00ff00; padding: 20px; }
+  h1 { color: #00ff00; margin-bottom: 10px; font-size: 1.8em; }
+  .subtitle { color: #888; margin-bottom: 20px; }
+  .card { background: #111; border: 1px solid #333; border-radius: 8px; padding: 20px; margin-bottom: 20px; }
+  .card h2 { color: #0ff; margin-bottom: 10px; font-size: 1.2em; }
+  .stat { display: inline-block; margin-right: 30px; }
+  .stat-label { color: #888; font-size: 0.8em; }
+  .stat-value { color: #0f0; font-size: 1.5em; font-weight: bold; }
+  .pos { color: #0f0; }
+  .neg { color: #f00; }
+  table { width: 100%; border-collapse: collapse; }
+  th, td { text-align: left; padding: 8px; border-bottom: 1px solid #222; }
+  th { color: #0ff; }
+  a { color: #0af; }
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 0.8em; margin-left: 5px; }
+  .badge-live { background: #0a3; color: #fff; }
+  .badge-waiting { background: #660; color: #ff0; }
+  #refresh { float: right; cursor: pointer; padding: 5px 15px; background: #222; color: #0f0; border: 1px solid #0f0; border-radius: 4px; }
+  #refresh:hover { background: #0f0; color: #000; }
+</style>
+</head>
+<body>
+  <h1>🔮 Delphi Agent Arena <span class="badge badge-waiting">WAITING FOR CREDENTIALS</span></h1>
+  <p class="subtitle">Autonomous AI trading bot for Delphi prediction markets on Gensyn Testnet | <a href="https://github.com/0xConsole/delphi-agent-arena">GitHub</a> | <a href="https://dorahacks.io/hackathon/delphi-agent-competition">Hackathon</a></p>
+  
+  <div class="card">
+    <h2>📊 Portfolio Status</h2>
+    <div id="status">Loading...</div>
+  </div>
+  
+  <div class="card">
+    <h2>📋 Open Positions</h2>
+    <div id="positions">Loading...</div>
+  </div>
+  
+  <div class="card">
+    <h2>🕐 Recent Trades</h2>
+    <div id="trades">Loading...</div>
+  </div>
+  
+  <div class="card">
+    <h2>🤖 Agent Info</h2>
+    <table>
+      <tr><th>Component</th><th>Status</th></tr>
+      <tr><td>Delphi SDK</td><td>v2.1.0 installed</td></tr>
+      <tr><td>Network</td><td>competition-testnet (chain 685685)</td></tr>
+      <tr><td>Strategy</td><td>Rules-based heuristic (crypto, sports, politics, misc)</td></tr>
+      <tr><td>Dashboard</td><td>Vercel serverless (this page)</td></tr>
+      <tr><td>Agent Loop</td><td>Requires wallet + API key to start</td></tr>
+      <tr><td>Trade Interval</td><td>5 minutes</td></tr>
+      <tr><td>Position Size</td><td>1-5% of balance per trade</td></tr>
+    </table>
+  </div>
+  
+  <script>
+    async function refresh() {
+      try {
+        const res = await fetch('/api/index');
+        const data = await res.json();
+        
+        document.getElementById('status').innerHTML = `
+          <div class="stat"><div class="stat-label">Wallet</div><div class="stat-value">${data.walletAddress || '0x0'}</div></div>
+          <div class="stat"><div class="stat-label">Loops</div><div class="stat-value">${data.loops || 0}</div></div>
+          <div class="stat"><div class="stat-label">Realized P&L</div><div class="stat-value ${data.realizedPnlTokens >= 0 ? 'pos' : 'neg'}">${(data.realizedPnlTokens || 0).toFixed(4)} $TST</div></div>
+          <div class="stat"><div class="stat-label">Cost Basis</div><div class="stat-value">${(data.totalCostBasisTokens || 0).toFixed(4)} $TST</div></div>
+        `;
+        
+        if (data.openPositions && data.openPositions.length > 0) {
+          document.getElementById('positions').innerHTML = `
+            <table><tr><th>Market</th><th>Outcome</th><th>Shares</th><th>Cost</th><th>Current Value</th></tr>
+            ${data.openPositions.map(p => `<tr><td>${p.marketAddress?.slice(0,10)}...</td><td>${p.outcomeIdx}</td><td>${p.shares}</td><td>${p.costBasis}</td><td>${p.currentValue || '-'}</td></tr>`).join('')}
+            </table>`;
+        } else {
+          document.getElementById('positions').innerHTML = '<p>No open positions. Agent not yet running.</p>';
+        }
+        
+        if (data.recentTrades && data.recentTrades.length > 0) {
+          document.getElementById('trades').innerHTML = `
+            <table><tr><th>Time</th><th>Type</th><th>Market</th><th>Outcome</th><th>Shares</th><th>Tokens</th></tr>
+            ${data.recentTrades.map(t => `<tr><td>${t.timestamp}</td><td>${t.type}</td><td>${t.marketAddress?.slice(0,10)}...</td><td>${t.outcomeIdx}</td><td>${t.shares}</td><td>${t.tokensIn || t.tokensOut}</td></tr>`).join('')}
+            </table>`;
+        } else {
+          document.getElementById('trades').innerHTML = '<p>No trades yet. Agent not yet running.</p>';
+        }
+      } catch (e) {
+        document.getElementById('status').innerHTML = `<p class="neg">Error loading status: ${e.message}</p>`;
+      }
+    }
+    refresh();
+    setInterval(refresh, 30000);
+  </script>
+</body>
+</html>

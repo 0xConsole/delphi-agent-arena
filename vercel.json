@@ -1,1 +1,1 @@
-{"buildCommand": "npm run build", "outputDirectory": "dist", "rewrites": [{"source": "/", "destination": "/api/index"}, {"source": "/api", "destination": "/api/index"}]}
+{"buildCommand": "npm run build", "outputDirectory": "dist", "rewrites": [{"source": "/api/health", "destination": "/api/index"}, {"source": "/api/status", "destination": "/api/index"}, {"source": "/api/positions", "destination": "/api/index"}, {"source": "/api/trades", "destination": "/api/index"}, {"source": "/api", "destination": "/api/index"}]}

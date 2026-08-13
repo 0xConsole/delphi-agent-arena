@@ -22,3 +22,4 @@ data/portfolio.json
 
 # Vercel
 .vercel/
+.vercel
