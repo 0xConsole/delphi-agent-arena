@@ -10,11 +10,13 @@
 - **Dashboard** (`src/dashboard/server.ts` + `api/index.ts`) — read-only web UI, deployed to Vercel
 - **Smoke test** (`src/scripts/smoke.ts`) — verifies connection without trading
 
-### Verified
-- ✅ TypeScript compiles cleanly (`npm run build`)
+### Verified (2026-08-15)
+- ✅ TypeScript compiles cleanly (`npm run build` — 0 errors)
 - ✅ Smoke test against live Gensyn Testnet: health=ok, wallet loaded, balances read
-- ✅ Deployed to Vercel: https://delphi-agent-arena.vercel.app
-- ✅ Pushed to GitHub: https://github.com/0xConsole/delphi-agent-arena
+- ✅ Dashboard live on Vercel: https://delphi-agent-arena.vercel.app/api/health → 200
+- ✅ Pushed to GitHub: https://github.com/0xConsole/delphi-agent-arena (public)
+- ✅ SETUP.md written with exact operator steps (register → fund → API key → run)
+- ✅ SDK `@gensyn-ai/gensyn-delphi-sdk` v2.1.0 installed
 
 ### Registration (from prior session)
 - DoraHacks hackathon ID: 2320

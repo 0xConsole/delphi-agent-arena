@@ -64,7 +64,21 @@ function loadPortfolio(): object {
 
 export default function handler(req: VercelRequest, res: VercelResponse) {
   const url = new URL(req.url ?? "/", "http://localhost");
-  if (url.pathname === "/api" || url.pathname === "/api/index") {
+  // Health check — lightweight, always-200 JSON probe for uptime monitors.
+  if (url.pathname === "/api/health") {
+    res.setHeader("Content-Type", "application/json; charset=utf-8");
+    res.status(200);
+    return res.end(
+      JSON.stringify({
+        status: "ok",
+        service: "delphi-agent-arena",
+        time: new Date().toISOString(),
+      }),
+    );
+  }
+  // Portfolio JSON — served for /api and any /api/* (vercel.json rewrites all
+  // /api/* to /api/index but preserves the original URL, so match by prefix).
+  if (url.pathname === "/api" || url.pathname === "/api/index" || url.pathname.startsWith("/api/")) {
     res.setHeader("Content-Type", "application/json; charset=utf-8");
     res.status(200);
     return res.end(JSON.stringify(loadPortfolio()));
